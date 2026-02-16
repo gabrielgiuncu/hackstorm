@@ -7,6 +7,7 @@ import random
 import hashlib
 import getpass
 import threading
+from datetime import datetime
 
 # ============================================================
 #                   CROSS-PLATFORM ANSI
@@ -283,10 +284,35 @@ def netmap_anim():
         time.sleep(0.25)
     print()
 
+def epic_fail(reason=""):
+    clear()
+    matrix_rain(0.8)
+    clear()
+    print()
+    p(f"  {C.BG_RED}{C.WHITE}{C.BOLD}{'='*50}{C.RESET}")
+    fire_text("             E P I C   F A I L")
+    p(f"  {C.BG_RED}{C.WHITE}{C.BOLD}{'='*50}{C.RESET}")
+    if reason:
+        p(f"  {C.RED}{reason}{C.RESET}")
+    print()
+
+def easter_egg_text():
+    eggs = [
+        f"  {C.MAGENTA}>>>>>>>>> PWNED BY: Anonymous <<<<<<<<<<{C.RESET}",
+        f"  {C.NEON_PINK}[+] ALL YOUR BASE ARE BELONG TO US{C.RESET}",
+        f"  {C.CYAN}[*] Have you tried turning it off and on again?{C.RESET}",
+        f"  {C.LIME}[!] It's not a bug, it's a feature{C.RESET}",
+        f"  {C.YELLOW}[#] The mitochondria is the powerhouse of the cell{C.RESET}",
+        f"  {C.RED}[X] ERROR 404: YOUR SECURITY NOT FOUND{C.RESET}",
+        f"  {C.GREEN}[✓] Hacking the Gibson...{C.RESET}",
+        f"  {C.PURPLE}[∞] Hello, World!{C.RESET}",
+    ]
+    return random.choice(eggs)
 
 # ============================================================
 #                    GAME STATE
 # ============================================================
+
 
 class GameState:
     def __init__(self):
@@ -295,28 +321,36 @@ class GameState:
         self.money = 1000
         self.level = 1
         self.xp = 0
-        self.xp_to_next = 100
-        self.tools = ["nmap", "ping"]
-        self.files = ["readme.txt", "notes.txt"]
-        self.completed_missions = []
-        self.current_network = "home"
-        self.connected_to = None
-        self.firewall_bypassed = False
-        self.detected = False
-        self.detection_level = 0
-        self.ip_address = f"192.168.1.{random.randint(2, 254)}"
-        self.vpn_active = False
-        self.proxy_chains = 0
-        self.botnet_size = 0
-        self.known_passwords = {}
-        self.intercepted_data = []
-        self.backdoors = []
-        self.log_cleaned = []
-        self.tutorial_done = False
-        self.crypto_wallet = 0.0
-        self.notes = []
-        self.available_targets = self._gen_targets()
-        self.shop_items = {
+    self.xp_to_next = 100
+    self.tools = ["nmap", "ping"]
+    self.files = ["readme.txt", "notes.txt"]
+    self.completed_missions = []
+    self.current_network = "home"
+    self.connected_to = None
+    self.firewall_bypassed = False
+    self.detected = False
+    self.detection_level = 0
+    self.ip_address = f"192.168.1.{random.randint(2, 254)}"
+    self.vpn_active = False
+    self.proxy_chains = 0
+    self.botnet_size = 0
+    self.known_passwords = {}
+    self.intercepted_data = []
+    self.backdoors = []
+    self.log_cleaned = []
+    self.tutorial_done = False
+    self.crypto_wallet = 0.0
+    self.notes = []
+    self.faction = None
+    self.faction_rank = 0
+    self.heat_level = 0
+    self.hacks_attempted = 0
+    self.hacks_successful = 0
+    self.players_hacked = []
+    self.enemy_hackers = []
+    self.custom_factions = {}
+    self.available_targets = self._gen_targets()
+    self.shop_items = {
             "hydra":{"price":300,"desc":"Brute-force cracker","type":"tool"},
             "sqlmap":{"price":500,"desc":"SQL injection tool","type":"tool"},
             "metasploit":{"price":800,"desc":"Exploit framework","type":"tool"},
@@ -336,6 +370,17 @@ class GameState:
             "ransomware":{"price":1500,"desc":"Encrypt target files","type":"tool"},
             "keylogger":{"price":350,"desc":"Log keystrokes","type":"tool"},
             "tor_browser":{"price":250,"desc":"Access dark web safely","type":"tool"},
+            "player_tracker":{"price":800,"desc":"Track other hackers","type":"tool"},
+            "honeypot":{"price":600,"desc":"Trap attackers","type":"service"},
+            "firewall_upgrade":{"price":1000,"desc":"Better defense","type":"upgrade"},
+            "insurance":{"price":500,"desc":"Recover from theft","type":"service"},
+            "blackmail_kit":{"price":3000,"desc":"Extort targets (risky!)","type":"tool"},
+        }
+        self.faction_items = {
+            "red_team": {"name": "Red Team", "desc": "Chaos agents", "color": C.RED, "bonus": "attack_power"},
+            "blue_team": {"name": "Blue Team", "desc": "Defenders", "color": C.BLUE, "bonus": "defense"},
+            "ghost_net": {"name": "Ghost Net", "desc": "Shadow collective", "color": C.MAGENTA, "bonus": "stealth"},
+            "syndicate": {"name": "Syndicate", "desc": "Crime lords", "color": C.ORANGE, "bonus": "money_steal"},
         }
 
     def _gen_targets(self):
@@ -372,6 +417,47 @@ class GameState:
                 "ports":{22:"SSH",8080:"Control Panel",9999:"Telemetry"},"firewall":True,"firewall_level":5,
                 "password":"0rb1t@lC0mm","loot":{"money":50000,"xp":3000,"files":["sat_telemetry.dat","comm_encryption.key","orbital_data.bin"]},
                 "compromised":False,"services":["SSH","Control Panel","Telemetry"]},
+            # NEW TARGETS
+            "192.168.100.50":{"name":"Tech Startup - TechFlow","difficulty":2,"os":"Ubuntu 18.04",
+                "ports":{22:"SSH",80:"HTTP",443:"HTTPS",5000:"API"},"firewall":False,"firewall_level":0,
+                "password":"startup123","loot":{"money":750,"xp":100,"files":["user_data.json","api_keys.txt"]},
+                "compromised":False,"services":["SSH","HTTP","HTTPS","API"]},
+            "10.1.1.1":{"name":"Hospital Network","difficulty":3,"os":"Windows Server 2016",
+                "ports":{3389:"RDP",1433:"MSSQL",445:"SMB"},"firewall":True,"firewall_level":2,
+                "password":"HospitalSec2024","loot":{"money":2000,"xp":200,"files":["patient_records.db","med_data.enc"]},
+                "compromised":False,"services":["RDP","MSSQL","SMB"]},
+            "172.20.0.1":{"name":"News Media Server","difficulty":2,"os":"Linux CentOS",
+                "ports":{22:"SSH",80:"HTTP",443:"HTTPS"},"firewall":True,"firewall_level":1,
+                "password":"MediaPass99","loot":{"money":600,"xp":120,"files":["article_db.sql","journalist_emails.txt"]},
+                "compromised":False,"services":["SSH","HTTP","HTTPS"]},
+            "10.50.50.50":{"name":"Gaming Studio Server","difficulty":3,"os":"Windows Server 2019",
+                "ports":{80:"HTTP",443:"HTTPS",3306:"MySQL",27017:"MongoDB"},"firewall":True,"firewall_level":2,
+                "password":"GameDev2024!","loot":{"money":1500,"xp":180,"files":["player_db.sql","source_code.zip"]},
+                "compromised":False,"services":["HTTP","HTTPS","MySQL","MongoDB"]},
+            "203.0.113.100":{"name":"Crypto Exchange - CoinVault","difficulty":4,"os":"Linux Ubuntu",
+                "ports":{443:"HTTPS",8080:"API",9200:"Elasticsearch"},"firewall":True,"firewall_level":3,
+                "password":"CryptoVault#2024","loot":{"money":15000,"xp":500,"files":["wallet_data.enc","trade_history.db"]},
+                "compromised":False,"services":["HTTPS","API","Elasticsearch"]},
+            "192.168.50.1":{"name":"E-commerce Platform","difficulty":3,"os":"CentOS Linux",
+                "ports":{80:"HTTP",443:"HTTPS",3306:"MySQL"},"firewall":True,"firewall_level":2,
+                "password":"ShopSecure123","loot":{"money":2500,"xp":220,"files":["customer_data.sql","payment_logs.txt"]},
+                "compromised":False,"services":["HTTP","HTTPS","MySQL"]},
+            "10.75.75.75":{"name":"Research Institute","difficulty":4,"os":"Ubuntu Server",
+                "ports":{22:"SSH",443:"HTTPS",8888:"Jupyter"},"firewall":True,"firewall_level":3,
+                "password":"Research#Lab99","loot":{"money":3500,"xp":400,"files":["research_data.zip","ai_models.tar.gz"]},
+                "compromised":False,"services":["SSH","HTTPS","Jupyter"]},
+            "198.51.100.75":{"name":"Law Firm Database","difficulty":3,"os":"Windows Server 2016",
+                "ports":{1433:"MSSQL",445:"SMB",3389:"RDP"},"firewall":True,"firewall_level":2,
+                "password":"LegalSec2024","loot":{"money":2000,"xp":250,"files":["case_files.db","client_info.enc"]},
+                "compromised":False,"services":["MSSQL","SMB","RDP"]},
+            "172.25.0.10":{"name":"Manufacturing Plant","difficulty":2,"os":"Windows Embedded",
+                "ports":{502:"Modbus",80:"HTTP"},"firewall":False,"firewall_level":0,
+                "password":"Factory123","loot":{"money":800,"xp":140,"files":["production_logs.csv","specs.txt"]},
+                "compromised":False,"services":["Modbus","HTTP"]},
+            "10.100.100.1":{"name":"Pharmaceutical Corp","difficulty":4,"os":"AIX Server",
+                "ports":{22:"SSH",443:"HTTPS",8443:"Secure"},"firewall":True,"firewall_level":4,
+                "password":"PharmaSec#99","loot":{"money":8000,"xp":600,"files":["clinical_trials.db","formulas.enc"]},
+                "compromised":False,"services":["SSH","HTTPS","Secure"]},
         }
 
     def add_xp(self, amount):
@@ -392,6 +478,7 @@ class GameState:
             amount = amount // 2
         amount = max(1, amount - self.proxy_chains * 5)
         self.detection_level = min(100, self.detection_level + amount)
+        self.heat_level = min(100, self.heat_level + amount // 2)
         if 75 <= self.detection_level < 100:
             warning_flash("DETECTION CRITICAL", 2)
         if self.detection_level >= 100:
@@ -407,17 +494,19 @@ class GameState:
             "botnet_size": self.botnet_size, "known_passwords": self.known_passwords,
             "backdoors": self.backdoors, "intercepted_data": self.intercepted_data,
             "completed_missions": self.completed_missions, "notes": self.notes,
-            "tutorial_done": self.tutorial_done,
+            "tutorial_done": self.tutorial_done, "faction": self.faction,
+            "heat_level": self.heat_level, "players_hacked": self.players_hacked,
             "compromised_targets": [ip for ip, t in self.available_targets.items() if t["compromised"]],
         }
 
     def from_dict(self, d):
         for k in ["money","level","xp","xp_to_next","reputation","crypto_wallet",
-                   "detection_level","vpn_active","proxy_chains","botnet_size","tutorial_done"]:
+                   "detection_level","vpn_active","proxy_chains","botnet_size","tutorial_done",
+                   "heat_level","faction"]:
             if k in d:
                 setattr(self, k, d[k])
         for k in ["tools","files","known_passwords","backdoors","intercepted_data",
-                   "completed_missions","notes"]:
+                   "completed_missions","notes","players_hacked"]:
             if k in d:
                 setattr(self, k, d[k])
         for ip in d.get("compromised_targets", []):
@@ -425,39 +514,85 @@ class GameState:
                 self.available_targets[ip]["compromised"] = True
 
 
-class MissionSystem:
-    def __init__(self):
-        self.missions = [
-            {"id":"m1","title":"Script Kiddie's First Hack","desc":"Hack home router 192.168.1.1",
-             "target":"192.168.1.1","objectives":["Scan","Crack","Exploit"],
-             "reward_money":200,"reward_xp":50,"reward_rep":5,"min_level":1,"completed":False},
-            {"id":"m2","title":"Data Heist","desc":"Steal customer DB from 10.0.0.5",
-             "target":"10.0.0.5","objectives":["Bypass FW","Crack","Download"],
-             "reward_money":1000,"reward_xp":150,"reward_rep":15,"min_level":2,"completed":False},
-            {"id":"m3","title":"Academic Espionage","desc":"Hack university database",
-             "target":"172.16.0.10","objectives":["Bypass FW","SQL inject","Exfiltrate"],
-             "reward_money":2500,"reward_xp":300,"reward_rep":25,"min_level":3,"completed":False},
-            {"id":"m4","title":"Dark Market Raid","desc":"Steal crypto from dark web",
-             "target":"198.51.100.20","objectives":["Bypass FW","Steal wallets"],
-             "reward_money":7500,"reward_xp":400,"reward_rep":35,"min_level":3,"completed":False},
-            {"id":"m5","title":"Corporate Takedown","desc":"Steal MegaCorp secrets",
-             "target":"10.10.10.1","objectives":["Bypass FW","Exploit SMB","Backdoor"],
-             "reward_money":5000,"reward_xp":500,"reward_rep":50,"min_level":4,"completed":False},
-            {"id":"m6","title":"Shadow Government","desc":"Infiltrate classified server",
-             "target":"10.20.30.40","objectives":["Chain proxies","Bypass mil-FW","Decrypt"],
-             "reward_money":15000,"reward_xp":2000,"reward_rep":100,"min_level":5,"completed":False},
-            {"id":"m7","title":"The Big Score","desc":"Rob Bank of CyberCity",
-             "target":"203.0.113.50","objectives":["Stealth","Crack vault","Clean logs"],
-             "reward_money":50000,"reward_xp":5000,"reward_rep":200,"min_level":6,"completed":False},
-            {"id":"m8","title":"Orbital Strike","desc":"Hack satellite comms",
-             "target":"10.99.99.1","objectives":["Bypass RTOS","Access telemetry","Keys"],
-             "reward_money":75000,"reward_xp":8000,"reward_rep":500,"min_level":7,"completed":False},
-        ]
 
-    def apply_save(self, completed):
-        for m in self.missions:
-            if m["id"] in completed:
-                m["completed"] = True
+
+class MissionSystem:
+def __init__(self):
+    self.missions = [
+        {"id":"m1","title":"Script Kiddie's First Hack","desc":"Hack home router 192.168.1.1",
+         "target":"192.168.1.1","objectives":["Scan","Crack","Exploit"],
+         "reward_money":200,"reward_xp":50,"reward_rep":5,"min_level":1,"completed":False},
+        {"id":"m2","title":"Data Heist","desc":"Steal customer DB from 10.0.0.5",
+         "target":"10.0.0.5","objectives":["Bypass FW","Crack","Download"],
+         "reward_money":1000,"reward_xp":150,"reward_rep":15,"min_level":2,"completed":False},
+        {"id":"m3","title":"Academic Espionage","desc":"Hack university database",
+         "target":"172.16.0.10","objectives":["Bypass FW","SQL inject","Exfiltrate"],
+         "reward_money":2500,"reward_xp":300,"reward_rep":25,"min_level":3,"completed":False},
+        {"id":"m4","title":"Dark Market Raid","desc":"Steal crypto from dark web",
+         "target":"198.51.100.20","objectives":["Bypass FW","Steal wallets"],
+         "reward_money":7500,"reward_xp":400,"reward_rep":35,"min_level":3,"completed":False},
+        {"id":"m5","title":"Corporate Takedown","desc":"Steal MegaCorp secrets",
+         "target":"10.10.10.1","objectives":["Bypass FW","Exploit SMB","Backdoor"],
+         "reward_money":5000,"reward_xp":500,"reward_rep":50,"min_level":4,"completed":False},
+        {"id":"m6","title":"Shadow Government","desc":"Infiltrate classified server",
+         "target":"10.20.30.40","objectives":["Chain proxies","Bypass mil-FW","Decrypt"],
+         "reward_money":15000,"reward_xp":2000,"reward_rep":100,"min_level":5,"completed":False},
+        {"id":"m7","title":"The Big Score","desc":"Rob Bank of CyberCity",
+         "target":"203.0.113.50","objectives":["Stealth","Crack vault","Clean logs"],
+         "reward_money":50000,"reward_xp":5000,"reward_rep":200,"min_level":6,"completed":False},
+        {"id":"m8","title":"Orbital Strike","desc":"Hack satellite comms",
+         "target":"10.99.99.1","objectives":["Bypass RTOS","Access telemetry","Keys"],
+         "reward_money":75000,"reward_xp":8000,"reward_rep":500,"min_level":7,"completed":False},
+            # NEW MISSIONS
+        # NEW MISSIONS - Extended gameplay
+        {"id":"m9","title":"Darknet Kingpin","desc":"Become the most feared hacker",
+         "target":"global","objectives":["Hack 5 players","Reach 500 reputation"],
+         "reward_money":100000,"reward_xp":10000,"reward_rep":300,"min_level":6,"completed":False},
+        {"id":"m10","title":"Faction War","desc":"Join a faction and reach rank 3",
+         "target":"faction","objectives":["Join faction","Complete 3 faction tasks"],
+         "reward_money":50000,"reward_xp":5000,"reward_rep":250,"min_level":5,"completed":False},
+        {"id":"m11","title":"Tech Startup Breach","desc":"Infiltrate TechFlow startup",
+         "target":"192.168.100.50","objectives":["Scan","Crack","Steal API keys"],
+         "reward_money":1500,"reward_xp":200,"reward_rep":20,"min_level":2,"completed":False},
+        {"id":"m12","title":"Healthcare Heist","desc":"Breach Hospital Network",
+         "target":"10.1.1.1","objectives":["Bypass Firewall","Access MSSQL","Exfiltrate"],
+         "reward_money":4000,"reward_xp":350,"reward_rep":40,"min_level":3,"completed":False},
+        {"id":"m13","title":"Media Manipulation","desc":"Compromise news server",
+         "target":"172.20.0.1","objectives":["Scan","Crack","Plant backdoor"],
+         "reward_money":2500,"reward_xp":250,"reward_rep":30,"min_level":3,"completed":False},
+        {"id":"m14","title":"Game Dev Raid","desc":"Steal from gaming studio",
+         "target":"10.50.50.50","objectives":["Bypass FW","SQL inject","Download code"],
+         "reward_money":3500,"reward_xp":400,"reward_rep":45,"min_level":4,"completed":False},
+        {"id":"m15","title":"Crypto Heist 2.0","desc":"Rob CoinVault exchange",
+         "target":"203.0.113.100","objectives":["Stealth hack","Bypass API","Steal funds"],
+         "reward_money":20000,"reward_xp":1200,"reward_rep":120,"min_level":5,"completed":False},
+        {"id":"m16","title":"E-commerce Takeover","desc":"Breach shopping platform",
+         "target":"192.168.50.1","objectives":["Scan","Crack","Data mining"],
+         "reward_money":3000,"reward_xp":300,"reward_rep":35,"min_level":3,"completed":False},
+        {"id":"m17","title":"Research Espionage","desc":"Steal AI research data",
+         "target":"10.75.75.75","objectives":["Advanced hack","Bypass FW","Exfiltrate"],
+         "reward_money":6000,"reward_xp":700,"reward_rep":80,"min_level":4,"completed":False},
+        {"id":"m18","title":"Legal Documents Theft","desc":"Rob law firm database",
+         "target":"198.51.100.75","objectives":["RDP hack","MSSQL breach","Clean logs"],
+         "reward_money":4500,"reward_xp":500,"reward_rep":60,"min_level":4,"completed":False},
+        {"id":"m19","title":"Industrial Espionage","desc":"Compromise manufacturing plant",
+         "target":"172.25.0.10","objectives":["Modbus attack","IoT breach","Control"],
+         "reward_money":2000,"reward_xp":280,"reward_rep":25,"min_level":2,"completed":False},
+        {"id":"m20","title":"Pharma Secrets","desc":"Steal pharmaceutical research",
+         "target":"10.100.100.1","objectives":["Advanced FW bypass","Stealth hack","Exfiltrate"],
+         "reward_money":12000,"reward_xp":1000,"reward_rep":150,"min_level":5,"completed":False},
+        {"id":"m21","title":"Master Hacker","desc":"Compromise all targets",
+         "target":"global","objectives":["Hack all 20 targets","Reach level 10"],
+         "reward_money":250000,"reward_xp":50000,"reward_rep":1000,"min_level":8,"completed":False},
+        {"id":"m22","title":"The Ultimate Heist","desc":"Steal from all major corporations",
+         "target":"global","objectives":["Rob 5 corps","Earn $100k","Stay undetected"],
+         "reward_money":150000,"reward_xp":20000,"reward_rep":500,"min_level":7,"completed":False},
+    ]
+
+def apply_save(self, completed):
+    for m in self.missions:
+        if m["id"] in completed:
+            m["completed"] = True
 
 
 # ============================================================
@@ -538,6 +673,8 @@ class HackStorm:
         self.history = []
         self.running = True
         self.save_counter = 0
+        self.online_players = {}
+        self.world_events = []
 
     # ── SYNC ──
     def sync_to_server(self):
@@ -563,15 +700,18 @@ class HackStorm:
         matrix_rain(1.5)
         clear()
         gprint("  ================================================", (0,255,255), (0,100,255))
-        gprint("         CYBER-OS v4.2.0 BOOT SEQUENCE", (0,200,255), (100,255,200))
+        gprint("         CYBER-OS v5.0.0 ENHANCED EDITION", (0,200,255), (100,255,200))
         gprint("  ================================================", (0,100,255), (0,255,255))
         print()
-        for msg in ["Loading BIOS", "CPU: Quantum i9-X", "RAM: 16GB DDR5",
-                     "Mounting filesystems", "Network daemon", "Crypto module AES-256",
-                     "Hacking framework v4.2"]:
+        for msg in ["Loading BIOS", "CPU: Quantum i9-X", "RAM: 32GB DDR6",
+                     "Mounting filesystems", "Network daemon", "Crypto module AES-512",
+                     "Hacking framework v5.0", "Loading faction database", "Initializing player tracker"]:
             type_loading(msg, random.uniform(0.2, 0.5))
         print()
         p(f"  {C.BOLD}{C.GREEN}[SYSTEM] All systems operational.{C.RESET}")
+        print()
+        print(easter_egg_text())
+        print()
         time.sleep(1)
         clear()
 
@@ -581,9 +721,10 @@ class HackStorm:
         gprint("    ╠═╣╠═╣║  ╠╩╗╚═╗ ║ ║ ║╠╦╝║║║", (0,200,255), (100,100,255))
         gprint("    ╩ ╩╩ ╩╚═╝╩ ╩╚═╝ ╩ ╚═╝╩╚═╩ ╩", (100,100,255), (200,0,255))
         mode = f"{C.GOLD}ONLINE{C.RESET}" if self.net.online else f"{C.STEEL}OFFLINE{C.RESET}"
-        print(f"       {C.BOLD}{C.WHITE}Terminal Hacking Simulator{C.RESET} [{mode}]")
+        print(f"       {C.BOLD}{C.WHITE}Terminal Hacking Simulator PRO{C.RESET} [{mode}]")
+        faction = f" | {self.state.faction_items.get(self.state.faction, {}).get('name', '')} [{self.state.faction_rank}]" if self.state.faction else ""
         gprint("  =============================================", (50,50,50), (150,150,150))
-        p(f"   Type {C.GREEN}'help'{C.RESET} for commands | {C.GREEN}'tutorial'{C.RESET} to learn")
+        p(f"   Type {C.GREEN}'help'{C.RESET} for commands | {C.GREEN}'tutorial'{C.RESET} to learn{faction}")
         gprint("  =============================================", (150,150,150), (50,50,50))
         print()
 
@@ -593,6 +734,9 @@ class HackStorm:
         parts = []
         if s.vpn_active:
             parts.append(f"{C.GREEN}[VPN]{C.RESET}")
+        if s.heat_level > 0:
+            hc = C.GREEN if s.heat_level < 30 else (C.YELLOW if s.heat_level < 70 else C.RED)
+            parts.append(f"{hc}[HEAT:{s.heat_level}%]{C.RESET}")
         if s.detection_level > 0:
             dc = C.GREEN if s.detection_level < 30 else (C.YELLOW if s.detection_level < 70 else C.RED)
             parts.append(f"{dc}[DET:{s.detection_level}%]{C.RESET}")
@@ -607,7 +751,7 @@ class HackStorm:
     def cmd_tutorial(self, a):
         pages = [
             ("THE BASICS", [
-                f"  {C.WHITE}You are a hacker. Complete missions, earn money, level up.{C.RESET}",
+                f"  {C.WHITE}You are a hacker. Complete missions, hack players, join factions.{C.RESET}",
                 f"  {C.YELLOW}Commands:{C.RESET} help, status, missions, targets, shop, save",
             ]),
             ("HOW TO HACK", [
@@ -619,11 +763,19 @@ class HackStorm:
                 f"  {C.CYAN}6.{C.RESET} {C.GREEN}download <file>{C.RESET}       Steal files",
                 f"  {C.CYAN}7.{C.RESET} {C.GREEN}clean_logs <ip>{C.RESET}       Cover tracks",
             ]),
-            ("STAY HIDDEN", [
-                f"  {C.RED}Detection at 100% = GAME OVER!{C.RESET}",
-                f"  {C.GREEN}buy vpn{C.RESET}         - 50% less detection",
-                f"  {C.GREEN}buy proxy_chain{C.RESET} - reduces detection",
-                f"  {C.GREEN}clean_logs{C.RESET}      - lowers detection 30%",
+            ("HACKING PLAYERS (NEW!)", [
+                f"  {C.MAGENTA}hack_player <player>{C.RESET}     Attack another hacker",
+                f"  {C.MAGENTA}steal_money <player> <amt>{C.RESET} Steal their cash",
+                f"  {C.MAGENTA}plant_malware <player>{C.RESET}   Install backdoor",
+                f"  {C.MAGENTA}track_player <player>{C.RESET}   Find their location",
+                f"  {C.RED}Higher risk = Higher heat!{C.RESET}",
+            ]),
+            ("FACTIONS & HEAT", [
+                f"  {C.CYAN}join_faction <faction>{C.RESET}    Join a group",
+                f"  {C.CYAN}faction_quest{C.RESET}              Earn faction points",
+                f"  {C.RED}Heat increases when you attack players{C.RESET}",
+                f"  {C.GREEN}buy vpn{C.RESET}         - Reduce heat faster",
+                f"  {C.GREEN}clean_logs{C.RESET}      - Drop heat 30%",
             ]),
             ("FIRST MISSION", [
                 f"  Target: {C.WHITE}192.168.1.1{C.RESET} (Easy, no firewall)",
@@ -631,6 +783,9 @@ class HackStorm:
                 f"  {C.CYAN}2.{C.RESET} nmap 192.168.1.1",
                 f"  {C.CYAN}3.{C.RESET} crack 192.168.1.1",
                 f"  {C.CYAN}4.{C.RESET} buy metasploit",
+                f"  {{C.CYAN}5.{C.RESET} exploit 192.168.1.1",
+                f"  {{C.CYAN}6.{C.RESET} connect 192.168.1.1",
+                f"  {{C.CYAN}7.{C.RESET} download router_config.txt",
                 f"  {C.CYAN}5.{C.RESET} exploit 192.168.1.1",
                 f"  {C.CYAN}6.{C.RESET} connect 192.168.1.1",
                 f"  {C.CYAN}7.{C.RESET} download router_config.txt",
@@ -652,7 +807,290 @@ class HackStorm:
         clear()
         self.show_banner()
 
-    # ── ALL GAME COMMANDS ──
+    # ── FACTION SYSTEM ──
+    def cmd_factions(self, a):
+        clear()
+        print()
+        gprint("  === FACTIONS ===", (200,0,200), (100,0,200))
+        print()
+        for fid, f in self.state.faction_items.items():
+            status = f"{C.GREEN}[JOINED Rank {self.state.faction_rank}]{C.RESET}" if self.state.faction == fid else ""
+            p(f"  {f['color']}{f['name']:<20}{C.RESET} {C.DIM}{f['desc']}{C.RESET} {status}")
+        print()
+        p(f"  Type {C.GREEN}'join_faction <name>'{C.RESET} to join")
+        print()
+
+    def cmd_join_faction(self, a):
+        if not a:
+            p("  [USAGE] join_faction <red_team|blue_team|ghost_net|syndicate>", C.YELLOW)
+            return
+        fid = a[0].lower()
+        if fid not in self.state.faction_items:
+            p("  [ERROR] Unknown faction.", C.RED)
+            return
+        if self.state.faction:
+            p(f"  [ERROR] Already in {self.state.faction_items[self.state.faction]['name']}. Leave first.", C.RED)
+            return
+        self.state.faction = fid
+        self.state.faction_rank = 1
+        faction = self.state.faction_items[fid]
+        clear()
+        print()
+        gprint(f"  === WELCOME TO {faction['name'].upper()} ===", tuple(map(ord, faction['color'])), (255, 100, 0))
+        print(faction['color'] + C.BOLD + "=== WELCOME TO " + faction['name'].upper() + " ===" + C.RESET)
+        print()
+        p(f"  {C.BOLD}You have joined {faction['color']}{faction['name']}{C.RESET}")
+        p(f"  {C.DIM}{faction['desc']}{C.RESET}")
+        p(f"  {C.YELLOW}Bonus: {faction['bonus']}{C.RESET}")
+        print()
+        self.state.add_xp(50)
+        self.state.reputation += 20
+
+    def cmd_faction_quest(self, a):
+        if not self.state.faction:
+            p("  [ERROR] Join a faction first.", C.RED)
+            return
+        faction = self.state.faction_items[self.state.faction]
+        clear()
+        print()
+        p(f"  {faction['color']}{C.BOLD}=== {faction['name']} QUEST ==={C.RESET}", faction['color'])
+        print(faction['color'] + C.BOLD + f"=== {faction['name']} QUEST ===" + C.RESET)
+        print()
+        
+        quests = {
+            "red_team": [
+                ("Sabotage Corporate Network", 5000, 200),
+                ("DDoS rival faction", 3000, 150),
+                ("Steal secret files", 4000, 180),
+            ],
+            "blue_team": [
+                ("Defend against 5 attacks", 4000, 200),
+                ("Patch critical vulnerabilities", 3500, 150),
+                ("Find rogue hacker", 5000, 180),
+            ],
+            "ghost_net": [
+                ("Complete 3 undetected hacks", 6000, 250),
+                ("Gather intel on targets", 4000, 160),
+                ("Stay hidden for 24hrs", 3000, 140),
+            ],
+            "syndicate": [
+                ("Steal $50k from players", 5000, 220),
+                ("Run extortion scheme", 4500, 190),
+                ("Control 3 botnets", 6000, 200),
+            ],
+        }
+        
+        selected = random.choice(quests.get(self.state.faction, []))
+        name, reward_xp, reward_rep = selected
+        
+        p(f"  {C.YELLOW}Quest: {name}{C.RESET}")
+        p(f"  Difficulty: {C.ORANGE}{'*' * random.randint(2, 4)}{C.RESET}")
+        p(f"  Reward: {C.CYAN}+{reward_xp} XP{C.RESET} {C.MAGENTA}+{reward_rep} Rep{C.RESET}")
+        print()
+        
+        ch = input(f"  {C.GREEN}Accept? (y/n):{C.RESET} ").strip().lower()
+        if ch == 'y':
+            progress_bar("Completing quest", random.uniform(2, 4))
+            self.state.add_xp(reward_xp)
+            self.state.reputation += reward_rep
+            self.state.faction_rank = min(5, self.state.faction_rank + 1)
+            p(f"  {C.GREEN}Quest complete! Rank: {self.state.faction_rank}{C.RESET}")
+
+    def cmd_create_faction(self, a):
+        """Create a custom faction"""
+        clear()
+        print()
+        gprint("  === CREATE FACTION ===", (255,100,255), (200,50,200))
+        print()
+        
+        faction_name = input(f"  {C.GREEN}Faction Name:{C.RESET} ").strip()
+        if not faction_name or len(faction_name) < 3:
+            p(f"  {C.RED}Invalid name (min 3 chars){C.RESET}")
+            return
+        
+        faction_desc = input(f"  {C.CYAN}Description:{C.RESET} ").strip()
+        if not faction_desc:
+            faction_desc = "A custom faction"
+        
+        faction_id = faction_name.lower().replace(" ", "_")
+        if faction_id in self.state.faction_items or faction_id in self.state.custom_factions:
+            p(f"  {C.RED}Faction name already exists!{C.RESET}")
+            return
+        
+        # Cost to create faction
+        creation_cost = 5000
+        if self.state.money < creation_cost:
+            p(f"  {C.RED}Need ${creation_cost:,} to create faction (you have ${self.state.money:,}){C.RESET}")
+            return
+        
+        self.state.money -= creation_cost
+        
+        # Create the faction
+        colors = [C.RED, C.BLUE, C.GREEN, C.MAGENTA, C.CYAN, C.YELLOW, C.ORANGE, C.PURPLE]
+        chosen_color = random.choice(colors)
+        
+        self.state.custom_factions[faction_id] = {
+            "name": faction_name,
+            "desc": faction_desc,
+            "color": chosen_color,
+            "bonus": random.choice(["attack_power", "defense", "stealth", "money_steal"]),
+            "creator": self.state.player_name,
+            "members": [self.state.player_name],
+            "level": 1
+        }
+        
+        self.state.faction = faction_id
+        self.state.faction_rank = 1
+        
+        clear()
+        print()
+        gprint("  === FACTION CREATED ===", chosen_color if chosen_color else C.CYAN, C.RESET)
+        print()
+        p(f"  {chosen_color}{C.BOLD}{faction_name}{C.RESET}")
+        p(f"  {faction_desc}")
+        p(f"  {C.YELLOW}Bonus: {self.state.custom_factions[faction_id]['bonus']}{C.RESET}")
+        print()
+        p(f"  {C.GREEN}✓ Faction created! Cost: ${creation_cost:,}{C.RESET}")
+        p(f"  {C.CYAN}Invite friends with: 'invite_faction <player>'{C.RESET}")
+        print()
+        time.sleep(2)
+
+    # ── PLAYER VS PLAYER ──
+    def cmd_players(self, a):
+        if not self.net.online:
+            p("  [ERROR] Need to be online.", C.RED)
+            return
+        clear()
+        print()
+        gprint("  === ONLINE HACKERS ===", (255,100,0), (255,50,50))
+        print()
+        resp = self.net.send({"action": "get_players"})
+        if resp.get("status") == "ok":
+            players = resp.get("players", [])
+            for player in players:
+                if player["name"] == self.net.username:
+                    continue
+                threat = "LOW" if player["level"] < self.state.level else ("MEDIUM" if player["level"] == self.state.level else "HIGH")
+                tc = C.GREEN if threat == "LOW" else (C.YELLOW if threat == "MEDIUM" else C.RED)
+                p(f"  {C.CYAN}{player['name']:<16}{C.RESET} Lvl:{player['level']:<3} Rep:{player['reputation']:<6} [{tc}{threat}{C.RESET}]")
+            print()
+            p(f"  Type {C.GREEN}'hack_player <name>'{C.RESET} to attack")
+        print()
+
+    def cmd_hack_player(self, a):
+        if not self.net.online:
+            p("  [ERROR] Need to be online.", C.RED)
+            return
+        if not a:
+            p("  [USAGE] hack_player <player_name>", C.YELLOW)
+            return
+        
+        target_name = a[0]
+        if target_name == self.net.username:
+            p("  [ERROR] Can't hack yourself, genius.", C.RED)
+            return
+        
+        self.state.hacks_attempted += 1
+        self.state.increase_detection(20)
+        self.state.heat_level = min(100, self.state.heat_level + 30)
+        
+        clear()
+        print()
+        glitch_text(f"  PLAYER EXPLOIT - {target_name}")
+        print()
+        
+        resp = self.net.send({"action": "get_player_info", "target": target_name})
+        if resp.get("status") != "ok":
+            epic_fail("Target not found or offline!")
+            return
+        
+        target = resp.get("player", {})
+        target_level = target.get("level", 1)
+        
+        # Success chance based on levels
+        base_chance = 50
+        if self.state.level > target_level:
+            base_chance += (self.state.level - target_level) * 10
+        else:
+            base_chance -= (target_level - self.state.level) * 10
+        
+        # VPN bonus
+        if self.state.vpn_active:
+            base_chance += 15
+        
+        # Firewall defense for target
+        if "firewall_upgrade" in target.get("tools", []):
+            base_chance -= 20
+        
+        base_chance = max(10, min(90, base_chance))
+        
+        hacker_bar("Breaching defenses...", 3)
+        
+        if random.randint(1, 100) <= base_chance:
+            self.state.hacks_successful += 1
+            self.state.players_hacked.append(target_name)
+            
+            # Steal money
+            steal_amount = random.randint(100, min(500, target.get("money", 0) // 2))
+            self.state.money += steal_amount
+            
+            print()
+            p(f"  {C.BG_DARK_GREEN}{C.WHITE}{C.BOLD} HACK SUCCESSFUL! {C.RESET}")
+            p(f"  {C.GREEN}Stole ${steal_amount:,} from {target_name}{C.RESET}")
+            p(f"  {C.CYAN}+50 XP{C.RESET}")
+            self.state.add_xp(50)
+            self.state.reputation += 30
+            
+            # Notify victim
+            self.net.send({
+                "action": "notify",
+                "target": target_name,
+                "message": f"{self.net.username} hacked you and stole ${steal_amount:,}!"
+            })
+        else:
+            print()
+            p(f"  {C.BG_DARK_RED}{C.WHITE}{C.BOLD} HACK FAILED! {C.RESET}")
+            p(f"  {C.RED}Their defenses were too strong.{C.RESET}")
+            self.state.increase_detection(15)
+            self.state.heat_level = min(100, self.state.heat_level + 20)
+            
+            # Target might trace you
+            if random.randint(1, 100) <= 30:
+                p(f"  {C.YELLOW}WARNING: Target is tracing you!{C.RESET}")
+                self.state.increase_detection(10)
+        
+        print()
+
+    def cmd_track_player(self, a):
+        if "player_tracker" not in self.state.tools:
+            p("  [ERROR] player_tracker tool needed.", C.RED)
+            return
+        if not a:
+            p("  [USAGE] track_player <name>", C.YELLOW)
+            return
+        
+        if not self.net.online:
+            p("  [ERROR] Need to be online.", C.RED)
+            return
+        
+        print()
+        type_loading(f"Tracking {a[0]}", 2)
+        type_loading("Triangulating signal", 1.5)
+        
+        resp = self.net.send({"action": "get_player_info", "target": a[0]})
+        if resp.get("status") == "ok":
+            target = resp.get("player", {})
+            print()
+            p(f"  {C.GREEN}Target located:{C.RESET}")
+            p(f"    Name: {target.get('name', '?')}")
+            p(f"    Level: {target.get('level', '?')}")
+            p(f"    Money: ${target.get('money', 0):,}")
+            p(f"    Location: {random.randint(1,223)}.{random.randint(0,255)}.{random.randint(0,255)}.{random.randint(1,254)}")
+            print()
+        else:
+            p(f"  {C.RED}Target not found.{C.RESET}")
+
+    # ── ORIGINAL COMMANDS ──
     def cmd_help(self, a):
         clear()
         cats = {
@@ -674,14 +1112,18 @@ class HackStorm:
                 "analyze <f>":"Forensics","pivot <ip>":"Pivot network"},
             "DEFENSE": {"vpn":"Toggle VPN","proxy":"Proxy status","encrypt <f>":"Encrypt",
                 "shred <f>":"Destroy file","spoof":"Spoof MAC"},
+            "PLAYER VS PLAYER": {"players":"List online","hack_player <x>":"Attack player",
+                "track_player <x>":"Find player","profile <x>":"Player profile"},
+            "FACTIONS": {"factions":"List factions","join_faction <x>":"Join group",
+                "faction_quest":"Take quest"},
         }
         if self.net.online:
             cats["ONLINE"] = {"online":"Who's online","chat <msg>":"Chat","chatlog":"Chat history",
-                "profile <x>":"Player profile","serverinfo":"Server info"}
+                "serverinfo":"Server info"}
 
         print()
         gprint("  === COMMAND REFERENCE ===", (0,255,255), (100,100,255))
-        cc = {"GENERAL":C.GREEN,"NETWORK":C.CYAN,"HACKING":C.RED,"POST-EXPLOIT":C.ORANGE,"DEFENSE":C.BLUE,"ONLINE":C.GOLD}
+        cc = {"GENERAL":C.GREEN,"NETWORK":C.CYAN,"HACKING":C.RED,"POST-EXPLOIT":C.ORANGE,"DEFENSE":C.BLUE,"PLAYER VS PLAYER":C.MAGENTA,"FACTIONS":C.PURPLE,"ONLINE":C.GOLD}
         for cat, cmds in cats.items():
             print()
             p(f"  {cc.get(cat,C.YELLOW)}{C.BOLD}-- {cat} --{C.RESET}")
@@ -703,7 +1145,9 @@ class HackStorm:
         p(f"    {C.STEEL}XP:{C.RESET}          [{C.CYAN}{'#'*filled}{C.STEEL}{'-'*(20-filled)}{C.RESET}] {s.xp}/{s.xp_to_next}")
         p(f"    {C.STEEL}Money:{C.RESET}       {C.GOLD}${s.money:,}{C.RESET}")
         p(f"    {C.STEEL}Crypto:{C.RESET}      {C.ORANGE}{s.crypto_wallet:.6f} BTC{C.RESET}")
-        p(f"    {C.STEEL}Rep:{C.RESET}         {C.MAGENTA}{s.reputation}{C.RESET}")
+        p(f"    {C.STEEL}Reputation:{C.RESET}  {C.MAGENTA}{s.reputation}{C.RESET}")
+        faction_info = f" [{self.state.faction_items[s.faction]['color']}{self.state.faction_items[s.faction]['name']}{C.RESET}]" if s.faction else ""
+        p(f"    {C.STEEL}Faction:{C.RESET}     {faction_info}")
         vc = C.GREEN if s.vpn_active else C.RED
         p(f"    {C.STEEL}VPN:{C.RESET}         {vc}{'ON' if s.vpn_active else 'OFF'}{C.RESET}")
         p(f"    {C.STEEL}Proxies:{C.RESET}     {C.BLUE}{s.proxy_chains}{C.RESET}")
@@ -713,6 +1157,11 @@ class HackStorm:
         dl = "LOW" if det < 30 else ("MED" if det < 70 else "CRIT!")
         df = int((det/100)*20)
         p(f"    {C.STEEL}Detection:{C.RESET}   [{dc}{'#'*df}{C.STEEL}{'-'*(20-df)}{C.RESET}] {dc}{det}% ({dl}){C.RESET}")
+        heat = s.heat_level
+        hc = C.GREEN if heat < 30 else (C.YELLOW if heat < 70 else C.RED)
+        hf = int((heat/100)*20)
+        p(f"    {C.STEEL}Heat:{C.RESET}        [{hc}{'#'*hf}{C.STEEL}{'-'*(20-hf)}{C.RESET}] {hc}{heat}%{C.RESET}")
+        p(f"    {C.STEEL}Hacks:{C.RESET}       {C.RED}{s.hacks_successful}/{s.hacks_attempted}{C.RESET}")
         p(f"    {C.STEEL}Network:{C.RESET}     {C.CYAN}{s.current_network}{C.RESET}")
         if s.connected_to:
             p(f"    {C.STEEL}Connected:{C.RESET}   {C.GREEN}{s.connected_to}{C.RESET}")
@@ -969,7 +1418,8 @@ class HackStorm:
             type_loading(f"Wiping {log}", random.uniform(0.2,0.5))
         self.state.log_cleaned.append(ip)
         self.state.detection_level = max(0, self.state.detection_level - 30)
-        p(f"\n  {C.GREEN}Logs cleaned! Detection -30%{C.RESET}"); self.state.add_xp(30)
+        self.state.heat_level = max(0, self.state.heat_level - 20)
+        p(f"\n  {C.GREEN}Logs cleaned! Detection -30%, Heat -20%{C.RESET}"); self.state.add_xp(30)
 
     def cmd_cat(self, a):
         if not a: p("  [USAGE] cat <file>", C.YELLOW); return
@@ -1017,6 +1467,9 @@ class HackStorm:
         if self.state.intercepted_data:
             print(); p(f"  {C.BOLD}{C.YELLOW}INTERCEPTED{C.RESET}")
             for d in self.state.intercepted_data: p(f"    {C.YELLOW}~{C.RESET} {d}")
+        if self.state.players_hacked:
+            print(); p(f"  {C.BOLD}{C.NEON_PINK}COMPROMISED PLAYERS{C.RESET}")
+            for pl in self.state.players_hacked: p(f"    {C.NEON_PINK}◆{C.RESET} {pl}")
         print()
 
     def cmd_shop(self, a):
@@ -1361,7 +1814,7 @@ class HackStorm:
             elif ch=="4":
                 for ip,t in self.state.available_targets.items(): t["compromised"]=True; self.state.known_passwords[ip]=t["password"]
                 p(f"  {C.GREEN}All compromised!{C.RESET}")
-            elif ch=="5": self.state.detection_level=0; self.state.detected=False; p(f"  {C.GREEN}Reset.{C.RESET}")
+            elif ch=="5": self.state.detection_level=0; self.state.heat_level=0; self.state.detected=False; p(f"  {C.GREEN}Reset.{C.RESET}")
             elif ch=="6":
                 for m in self.missions.missions:
                     if not m["completed"]: m["completed"]=True; self.state.completed_missions.append(m["id"]); self.state.money+=m["reward_money"]; self.state.reputation+=m["reward_rep"]
@@ -1374,7 +1827,7 @@ class HackStorm:
                 except: p("  Bad.",C.RED)
             elif ch=="9":
                 self.state.money=999999; self.state.level=10; self.state.reputation=99999
-                self.state.detection_level=0; self.state.vpn_active=True; self.state.proxy_chains=5
+                self.state.detection_level=0; self.state.heat_level=0; self.state.vpn_active=True; self.state.proxy_chains=5
                 self.state.botnet_size=100; self.state.crypto_wallet=100.0
                 for t in self.state.shop_items:
                     if self.state.shop_items[t]["type"]=="tool" and t not in self.state.tools: self.state.tools.append(t)
@@ -1412,6 +1865,7 @@ class HackStorm:
             p(f"  {C.BG_RED}{C.WHITE}{C.BOLD}   YOUR IDENTITY HAS BEEN EXPOSED   {C.RESET}")
             p(f"  {C.BG_RED}{C.WHITE}{C.BOLD}{'='*50}{C.RESET}"); print()
             p(f"  Level: {self.state.level} | Money: ${self.state.money:,} | Missions: {len(self.state.completed_missions)}/{len(self.missions.missions)}")
+            p(f"  Rep: {self.state.reputation} | Hacks: {self.state.hacks_successful}/{self.state.hacks_attempted}")
             if self.net.online: self.sync_to_server()
             print(); ch = input(f"  {C.YELLOW}Play again? (y/n):{C.RESET} ").strip().lower()
             if ch == 'y':
@@ -1451,11 +1905,392 @@ class HackStorm:
             "sudo":self.cmd_sudo,
             "online":self.cmd_online,"chat":self.cmd_chat,"chatlog":self.cmd_chatlog,
             "profile":self.cmd_profile,"serverinfo":self.cmd_serverinfo,
+            # NEW PVP & FACTION COMMANDS
+            "players":self.cmd_players,"hack_player":self.cmd_hack_player,
+            "track_player":self.cmd_track_player,"factions":self.cmd_factions,
+            "join_faction":self.cmd_join_faction,"faction_quest":self.cmd_faction_quest,
+            "create_faction":self.cmd_create_faction,
+            "defenses":self.cmd_defenses,"attacks":self.cmd_attacks,"bounty":self.cmd_bounty,
+            "war":self.cmd_war,"safehouse":self.cmd_safehouse,"events":self.cmd_events,
+            "casino":self.cmd_casino,"dark_market":self.cmd_dark_market,
         }
         if cmd in cmds:
             cmds[cmd](args); self.auto_sync()
         else:
             p(f"  {C.RED}Unknown: '{cmd}'. Type 'help'.{C.RESET}")
+
+    # ── PVP COMMANDS ──
+    def cmd_players(self, a):
+        if not self.net.online:
+            p("  [ERROR] Need to be online.", C.RED)
+            return
+        clear()
+        print()
+        gprint("  === ONLINE HACKERS ===", (255,100,0), (255,50,50))
+        print()
+        resp = self.net.send({"action": "get_players"})
+        if resp.get("status") == "ok":
+            players = resp.get("players", [])
+            for player in players:
+                if player["name"] == self.net.username:
+                    continue
+                threat = "LOW" if player["level"] < self.state.level else ("MEDIUM" if player["level"] == self.state.level else "HIGH")
+                tc = C.GREEN if threat == "LOW" else (C.YELLOW if threat == "MEDIUM" else C.RED)
+                status = f"{C.GOLD}[ONLINE]{C.RESET}" if player.get("online") else f"{C.DIM}[OFFLINE]{C.RESET}"
+                p(f"  {C.CYAN}{player['name']:<16}{C.RESET} Lvl:{player['level']:<3} Rep:{player['reputation']:<6} [{tc}{threat}{C.RESET}] {status}")
+            print()
+            p(f"  Type {C.GREEN}'hack_player <name>'{C.RESET} to attack")
+        print()
+
+    def cmd_hack_player(self, a):
+        if not self.net.online:
+            p("  [ERROR] Need to be online.", C.RED)
+            return
+        if not a:
+            p("  [USAGE] hack_player <player_name>", C.YELLOW)
+            return
+        
+        target_name = a[0]
+        if target_name == self.net.username:
+            p("  [ERROR] Can't hack yourself, genius.", C.RED)
+            return
+        
+        self.state.hacks_attempted += 1
+        self.state.increase_detection(20)
+        self.state.heat_level = min(100, self.state.heat_level + 30)
+        
+        clear()
+        print()
+        glitch_text(f"  PLAYER EXPLOIT - {target_name}")
+        print()
+        
+        resp = self.net.send({"action": "get_player_info", "target": target_name})
+        if resp.get("status") != "ok":
+            epic_fail("Target not found or offline!")
+            return
+        
+        target = resp.get("player", {})
+        target_level = target.get("level", 1)
+        
+        base_chance = 50
+        if self.state.level > target_level:
+            base_chance += (self.state.level - target_level) * 10
+        else:
+            base_chance -= (target_level - self.state.level) * 10
+        
+        if self.state.vpn_active:
+            base_chance += 15
+        
+        if "firewall_upgrade" in target.get("tools", []):
+            base_chance -= 20
+        
+        base_chance = max(10, min(90, base_chance))
+        
+        hacker_bar("Breaching defenses...", 3)
+        
+        if random.randint(1, 100) <= base_chance:
+            self.state.hacks_successful += 1
+            if target_name not in self.state.players_hacked:
+                self.state.players_hacked.append(target_name)
+            
+            steal_amount = random.randint(100, min(500, target.get("money", 0) // 2))
+            self.state.money += steal_amount
+            
+            print()
+            p(f"  {C.BG_DARK_GREEN}{C.WHITE}{C.BOLD} HACK SUCCESSFUL! {C.RESET}")
+            p(f"  {C.GREEN}Stole ${steal_amount:,} from {target_name}{C.RESET}")
+            p(f"  {C.CYAN}+50 XP{C.RESET}")
+            self.state.add_xp(50)
+            self.state.reputation += 30
+            
+            self.net.send({
+                "action": "notify",
+                "target": target_name,
+                "message": f"{self.net.username} hacked you and stole ${steal_amount:,}!"
+            })
+        else:
+            print()
+            p(f"  {C.BG_DARK_RED}{C.WHITE}{C.BOLD} HACK FAILED! {C.RESET}")
+            p(f"  {C.RED}Their defenses were too strong.{C.RESET}")
+            self.state.increase_detection(15)
+            self.state.heat_level = min(100, self.state.heat_level + 20)
+            
+            if random.randint(1, 100) <= 30:
+                p(f"  {C.YELLOW}WARNING: Target is tracing you!{C.RESET}")
+                self.state.increase_detection(10)
+        
+        print()
+
+    def cmd_track_player(self, a):
+        if "player_tracker" not in self.state.tools:
+            p("  [ERROR] player_tracker tool needed.", C.RED)
+            return
+        if not a:
+            p("  [USAGE] track_player <name>", C.YELLOW)
+            return
+        
+        if not self.net.online:
+            p("  [ERROR] Need to be online.", C.RED)
+            return
+        
+        print()
+        type_loading(f"Tracking {a[0]}", 2)
+        type_loading("Triangulating signal", 1.5)
+        
+        resp = self.net.send({"action": "get_player_info", "target": a[0]})
+        if resp.get("status") == "ok":
+            target = resp.get("player", {})
+            print()
+            p(f"  {C.GREEN}Target located:{C.RESET}")
+            p(f"    Name: {target.get('name', '?')}")
+            p(f"    Level: {target.get('level', '?')}")
+            p(f"    Money: ${target.get('money', 0):,}")
+            p(f"    Reputation: {target.get('reputation', 0)}")
+            fake_ip = f"{random.randint(1,223)}.{random.randint(0,255)}.{random.randint(0,255)}.{random.randint(1,254)}"
+            p(f"    Location: {fake_ip}")
+            print()
+        else:
+            p(f"  {C.RED}Target not found.{C.RESET}")
+
+    # ── FACTION COMMANDS ──
+    def cmd_factions(self, a):
+        clear()
+        print()
+        gprint("  === FACTIONS ===", (200,0,200), (100,0,200))
+        print()
+        for fid, f in self.state.faction_items.items():
+            status = f"{C.GREEN}[JOINED Rank {self.state.faction_rank}]{C.RESET}" if self.state.faction == fid else ""
+            p(f"  {f['color']}{f['name']:<20}{C.RESET} {C.DIM}{f['desc']}{C.RESET} {status}")
+        print()
+        p(f"  Type {C.GREEN}'join_faction <name>'{C.RESET} to join")
+        print()
+
+    def cmd_join_faction(self, a):
+        if not a:
+            p("  [USAGE] join_faction <red_team|blue_team|ghost_net|syndicate>", C.YELLOW)
+            return
+        fid = a[0].lower()
+        if fid not in self.state.faction_items:
+            p("  [ERROR] Unknown faction.", C.RED)
+            return
+        if self.state.faction:
+            p(f"  [ERROR] Already in {self.state.faction_items[self.state.faction]['name']}.", C.RED)
+            return
+        self.state.faction = fid
+        self.state.faction_rank = 1
+        faction = self.state.faction_items[fid]
+        clear()
+        print()
+        p(f"  {faction['color']}{C.BOLD}=== WELCOME TO {faction['name'].upper()} ==={C.RESET}")
+        print()
+        p(f"  {C.BOLD}You have joined {faction['color']}{faction['name']}{C.RESET}")
+        p(f"  {C.DIM}{faction['desc']}{C.RESET}")
+        p(f"  {C.YELLOW}Bonus: {faction['bonus']}{C.RESET}")
+        print()
+        self.state.add_xp(50)
+        self.state.reputation += 20
+
+    def cmd_faction_quest(self, a):
+        if not self.state.faction:
+            p("  [ERROR] Join a faction first.", C.RED)
+            return
+        faction = self.state.faction_items[self.state.faction]
+        clear()
+        print()
+        p(f"  {faction['color']}{C.BOLD}=== {faction['name']} QUEST ==={C.RESET}")
+        print()
+        
+        quests = {
+            "red_team": [
+                ("Sabotage Corporate Network", 5000, 200),
+                ("DDoS rival faction", 3000, 150),
+                ("Steal secret files", 4000, 180),
+            ],
+            "blue_team": [
+                ("Defend against 5 attacks", 4000, 200),
+                ("Patch critical vulnerabilities", 3500, 150),
+                ("Find rogue hacker", 5000, 180),
+            ],
+            "ghost_net": [
+                ("Complete 3 undetected hacks", 6000, 250),
+                ("Gather intel on targets", 4000, 160),
+                ("Stay hidden for 24hrs", 3000, 140),
+            ],
+            "syndicate": [
+                ("Steal $50k from players", 5000, 220),
+                ("Run extortion scheme", 4500, 190),
+                ("Control 3 botnets", 6000, 200),
+            ],
+        }
+        
+        selected = random.choice(quests.get(self.state.faction, []))
+        name, reward_xp, reward_rep = selected
+        
+        p(f"  {C.YELLOW}Quest: {name}{C.RESET}")
+        p(f"  Difficulty: {C.ORANGE}{'*' * random.randint(2, 4)}{C.RESET}")
+        p(f"  Reward: {C.CYAN}+{reward_xp} XP{C.RESET} {C.MAGENTA}+{reward_rep} Rep{C.RESET}")
+        print()
+        
+        ch = input(f"  {C.GREEN}Accept? (y/n):{C.RESET} ").strip().lower()
+        if ch == 'y':
+            progress_bar("Completing quest", random.uniform(2, 4))
+            self.state.add_xp(reward_xp)
+            self.state.reputation += reward_rep
+            self.state.faction_rank = min(5, self.state.faction_rank + 1)
+            p(f"  {C.GREEN}Quest complete! Rank: {self.state.faction_rank}{C.RESET}")
+
+    def cmd_defenses(self, a):
+        clear()
+        print()
+        gprint("  === YOUR DEFENSES ===", (0,200,255), (0,100,200))
+        print()
+        p(f"  {C.BOLD}Security Systems:{C.RESET}")
+        p(f"    Firewall: {C.GREEN if 'firewall_upgrade' in self.state.tools else C.RED}{'ON' if 'firewall_upgrade' in self.state.tools else 'OFF'}{C.RESET}")
+        p(f"    Honeypot: {C.GREEN if 'honeypot' in self.state.tools else C.RED}{'ACTIVE' if 'honeypot' in self.state.tools else 'INACTIVE'}{C.RESET}")
+        p(f"    VPN: {C.GREEN if self.state.vpn_active else C.RED}{'ON' if self.state.vpn_active else 'OFF'}{C.RESET}")
+        p(f"    Proxies: {C.CYAN}{self.state.proxy_chains}{C.RESET}")
+        print()
+        p(f"  {C.BOLD}Recent Attacks:{C.RESET}")
+        attacks = random.randint(0, 5)
+        if attacks == 0:
+            p(f"    {C.GREEN}None. You're safe.{C.RESET}")
+        else:
+            for _ in range(attacks):
+                attacker = random.choice(["ZeroCool", "AcidBurn", "Phantom", "N3tRunner"])
+                p(f"    {C.RED}[!]{C.RESET} {attacker} attempted breach")
+        print()
+
+    def cmd_attacks(self, a):
+        clear()
+        print()
+        gprint("  === ATTACK LOG ===", (255,0,0), (200,0,0))
+        print()
+        if self.state.hacks_attempted == 0:
+            p(f"  {C.DIM}No attacks yet.{C.RESET}")
+        else:
+            p(f"  Total Attempts: {self.state.hacks_attempted}")
+            p(f"  Successful: {self.state.hacks_successful}")
+            success_rate = (self.state.hacks_successful / self.state.hacks_attempted * 100) if self.state.hacks_attempted > 0 else 0
+            p(f"  Success Rate: {C.YELLOW}{success_rate:.1f}%{C.RESET}")
+            if self.state.players_hacked:
+                print()
+                p(f"  {C.BOLD}Hacked Players:{C.RESET}")
+                for player in self.state.players_hacked:
+                    p(f"    {C.RED}◆{C.RESET} {player}")
+        print()
+
+    def cmd_bounty(self, a):
+        if not self.net.online:
+            p("  [ERROR] Need to be online.", C.RED)
+            return
+        clear()
+        print()
+        gprint("  === BOUNTY BOARD ===", (255,100,0), (200,50,0))
+        print()
+        resp = self.net.send({"action": "get_bounties"})
+        if resp.get("status") == "ok":
+            bounties = resp.get("bounties", [])
+            if not bounties:
+                p(f"  {C.DIM}No bounties available.{C.RESET}")
+            else:
+                for bounty in bounties:
+                    p(f"  {C.RED}{bounty['target']}{C.RESET}")
+                    p(f"    Bounty: {C.GOLD}${bounty['reward']:,}{C.RESET}")
+                    p(f"    Reason: {bounty['reason']}")
+                    print()
+        print()
+
+    def cmd_war(self, a):
+        if not self.state.faction:
+            p("  [ERROR] Join a faction first.", C.RED)
+            return
+        clear()
+        print()
+        faction = self.state.faction_items[self.state.faction]
+        gprint(f"  === {faction['name'].upper()} WAR STATUS ===", tuple([100]*3), tuple([200]*3))
+        print()
+        p(f"  {faction['color']}{faction['name']}{C.RESET}")
+        p(f"    Members: {random.randint(5, 50)}")
+        p(f"    Territory: {random.randint(1, 10)} servers")
+        p(f"    Rival: {random.choice(['Red Team', 'Blue Team', 'Ghost Net', 'Syndicate'])}")
+        print()
+        print()
+
+    def cmd_safehouse(self, a):
+        clear()
+        print()
+        gprint("  === SAFEHOUSE ===", (100,100,255), (50,50,200))
+        print()
+        p(f"  {C.BOLD}Hideout Status:{C.RESET}")
+        p(f"    Location: {random.choice(['Abandoned datacenter', 'Dark web node', 'Hidden server', 'Virtual machine'])}")
+        p(f"    Security: {C.GREEN}HIGH{C.RESET}")
+        p(f"    Detection Risk: {C.YELLOW if self.state.heat_level > 50 else C.GREEN}{self.state.heat_level}%{C.RESET}")
+        print()
+        p(f"  {C.BOLD}Options:{C.RESET}")
+        p(f"    rest - Recover from heat (-20%)")
+        p(f"    upgrade - Fortify defenses")
+        print()
+
+    def cmd_events(self, a):
+        clear()
+        print()
+        gprint("  === WORLD EVENTS ===", (255,255,0), (200,200,0))
+        print()
+        events = [
+            f"{C.RED}[ALERT]{C.RESET} FBI launches Operation Cyber Shield",
+            f"{C.CYAN}[NEWS]{C.RESET} New zero-day discovered in Windows",
+            f"{C.YELLOW}[THREAT]{C.RESET} Infamous hacker group active",
+            f"{C.GREEN}[UPDATE]{C.RESET} New exploit framework released",
+            f"{C.MAGENTA}[BOUNTY]{C.RESET} $100k reward for corporate secrets",
+        ]
+        for event in random.sample(events, min(3, len(events))):
+            p(f"  {event}")
+        print()
+
+    def cmd_casino(self, a):
+        clear()
+        print()
+        gprint("  === CRYPTO CASINO ===", (255,100,255), (200,50,200))
+        print()
+        p(f"  Balance: {C.GOLD}${self.state.money:,}{C.RESET}")
+        print()
+        p(f"  Games: roulette | blackjack | slots | dice")
+        print()
+        if a and a[0].lower() == "roulette":
+            try:
+                bet = int(a[1]) if len(a) > 1 else 100
+                if bet > self.state.money:
+                    p(f"  Insufficient funds.", C.RED)
+                    return
+                self.state.money -= bet
+                if random.randint(1, 100) <= 45:
+                    winnings = int(bet * random.uniform(1.5, 3))
+                    self.state.money += winnings
+                    p(f"  {C.GREEN}WON! +${winnings}{C.RESET}")
+                else:
+                    p(f"  {C.RED}Lost ${bet}{C.RESET}")
+            except:
+                p(f"  [USAGE] casino roulette <amount>", C.YELLOW)
+        else:
+            p(f"  Type: {C.GREEN}casino roulette <amount>{C.RESET}")
+        print()
+
+    def cmd_dark_market(self, a):
+        clear()
+        print()
+        gprint("  === DARK WEB MARKET ===", (100,0,100), (50,0,50))
+        fire_text("        * BLACK MARKET GOODS *")
+        print()
+        dark_items = {
+            "exploit_kit": {"price": 5000, "desc": "Undetectable exploit"},
+            "stolen_data": {"price": 2000, "desc": "Leaked databases"},
+            "botnet_army": {"price": 15000, "desc": "1000 compromised hosts"},
+            "fake_identity": {"price": 3000, "desc": "Spoof any nationality"},
+            "quantum_key": {"price": 20000, "desc": "Unbreakable encryption"},
+        }
+        for item_id, item in dark_items.items():
+            p(f"  {C.MAGENTA}{item_id:<20}{C.RESET} {C.GOLD}${item['price']:<8}{C.RESET} {C.DIM}{item['desc']}{C.RESET}")
+        print()
 
     def quit_game(self):
         clear(); print()
@@ -1471,7 +2306,6 @@ class HackStorm:
         gprint("  =============================================", (50,50,50), (100,100,100))
         print(); sys.exit(0)
 
-    # ── MAIN ──
     def run(self):
         clear()
         print()
@@ -1480,7 +2314,6 @@ class HackStorm:
         gprint("    ╩ ╩╩ ╩╚═╝╩ ╩╚═╝ ╩ ╚═╝╩╚═╩ ╩", (100,100,255), (200,0,255))
         print()
 
-        # Ask to connect online
         p(f"  {C.YELLOW}Connect to online server?{C.RESET}")
         p(f"  {C.DIM}(Enter server address or press ENTER for offline){C.RESET}")
         print()
@@ -1495,12 +2328,10 @@ class HackStorm:
             p(f"\n  Connecting to {host}:{port}...", C.YELLOW)
             if self.net.connect(host, port):
                 p(f"  {C.GREEN}Connected!{C.RESET}")
-                # Get server info
                 info = self.net.send({"action":"info"})
                 if info.get("status") == "ok":
                     p(f"  {C.STEEL}{info.get('server','?')} | {info.get('total_players',0)} players | {info.get('online',0)} online{C.RESET}")
                 print()
-                # Login/Register
                 while True:
                     p(f"  {C.GREEN}1{C.RESET} Login")
                     p(f"  {C.CYAN}2{C.RESET} Register")
@@ -1537,24 +2368,20 @@ class HackStorm:
                 self.net.online = False
                 time.sleep(1)
         else:
-            # Offline mode
             name = input(f"\n  {C.GREEN}Hacker alias:{C.RESET} ").strip()
             if name: self.state.player_name = name
 
-        # Boot
         self.boot()
         getpass.getpass(f"  {C.GREEN}Password:{C.RESET} ")
         type_loading("Authenticating", 1); type_loading("Loading profile", 0.6)
         print(); decrypt_anim(f"Welcome back, {self.state.player_name}.")
         time.sleep(1); clear(); self.show_banner()
 
-        # Tutorial
         if not self.state.tutorial_done:
             ch = input(f"  {C.CYAN}Tutorial? (y/n):{C.RESET} ").strip().lower()
             if ch == 'y': self.cmd_tutorial([])
             else: self.state.tutorial_done = True; p(f"  Type {C.GREEN}'tutorial'{C.RESET} anytime.\n")
 
-        # Main loop
         while self.running:
             try:
                 self.check_detection()
